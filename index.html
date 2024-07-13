@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contas a Pagar</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Contas a Pagar</h1>
+    <form id="accountForm">
+        <label for="name">Nome:</label>
+        <input type="text" id="name" required><br>
+        <label for="date">Data:</label>
+        <input type="text" id="date" placeholder="ddmmaaaa" required><br>
+        <label for="type">Tipo:</label>
+        <input type="text" id="type" required><br>
+        <label for="value">Valor:</label>
+        <input type="text" id="value" required><br>
+        <label for="observations">Observações:</label>
+        <input type="text" id="observations"><br>
+        <button type="submit">Adicionar Conta</button>
+    </form>
+
+    <h2>Contas Registradas</h2>
+    <div id="accountsContainer"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

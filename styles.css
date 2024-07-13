@@ -1,0 +1,154 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  margin: 0;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+form {
+  max-width: 600px;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border-radius: 5px;
+}
+
+form label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+form input,
+form select,
+form textarea {
+  width: calc(100% - 12px);
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+form button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-right: 5px;
+  font-size: 14px;
+}
+
+form button:hover {
+  background-color: #0056b3;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border-radius: 5px;
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+}
+
+.edit-btn {
+  background-color: #28a745;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  color: white;
+  font-size: 14px;
+}
+
+.edit-btn:hover {
+  background-color: #218838;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  color: white;
+  font-size: 14px;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
+}
+
+.alert-overdue {
+  background-color: #f8d7da;
+}
+
+.alert-close {
+  background-color: #fff3cd;
+}
+
+.alert-on-time {
+  background-color: #d4edda;
+}
+
+@media (max-width: 768px) {
+  form {
+    padding: 15px;
+  }
+
+  table, th, td {
+    font-size: 12px;
+  }
+
+  form button {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .edit-btn, .delete-btn {
+    padding: 5px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  form {
+    padding: 10px;
+  }
+
+  table, th, td {
+    font-size: 10px;
+    padding: 5px;
+  }
+
+  form button {
+    padding: 8px;
+    font-size: 10px;
+  }
+
+  .edit-btn, .delete-btn {
+    padding: 4px;
+    font-size: 10px;
+  }
+}
