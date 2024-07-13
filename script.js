@@ -12,7 +12,7 @@ function renderAccounts() {
 
   const accountsByMonth = {};
   accounts.forEach((account) => {
-    const monthYear = account.date.substring(0, 7);
+    const monthYear = account.date.substring(3, 10);
     if (!accountsByMonth[monthYear]) {
       accountsByMonth[monthYear] = [];
     }
@@ -56,7 +56,7 @@ function renderAccounts() {
 
       row.innerHTML = `
                 <td>${account.name}</td>
-                <td>${formatDate(account.date)}</td>
+                <td>${account.date}</td>
                 <td>${account.type}</td>
                 <td>R$ ${formatCurrency(account.value)}</td>
                 <td>${account.observations}</td>
@@ -78,14 +78,15 @@ function renderAccounts() {
 function calculateDaysUntilDue(dueDate) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const due = new Date(dueDate);
+  const [day, month, year] = dueDate.split('/');
+  const due = new Date(`${year}-${month}-${day}`);
   const timeDiff = due.getTime() - today.getTime();
   return Math.ceil(timeDiff / (1000 * 3600 * 24));
 }
 
 function formatDate(dateString) {
-  const options = { year: "numeric", month: "2-digit", day: "2-digit" };
-  return new Date(dateString).toLocaleDateString("pt-BR", options);
+  const [year, month, day] = dateString.split('-');
+  return `${day}/${month}/${year}`;
 }
 
 function formatCurrency(value) {
@@ -93,18 +94,9 @@ function formatCurrency(value) {
 }
 
 function getMonthName(monthYear) {
-  const [year, month] = monthYear.split("-");
+  const [month, year] = monthYear.split("-");
   const date = new Date(year, month - 1);
   return date.toLocaleString("pt-BR", { month: "long", year: "numeric" });
-}
-
-function parseDate(dateString) {
-  const day = dateString.slice(0, 2);
-  const month = dateString.slice(2, 4) - 1; // Ajuste para o mês ser 0-indexado
-  const year = dateString.slice(4, 8);
-  const date = new Date(year, month, day);
-  date.setHours(date.getHours() + date.getTimezoneOffset() / 60); // Ajuste para o fuso horário
-  return date.toISOString().split('T')[0];
 }
 
 accountForm.addEventListener("submit", function (event) {
@@ -112,7 +104,7 @@ accountForm.addEventListener("submit", function (event) {
 
   const account = {
     name: accountForm.name.value,
-    date: parseDate(accountForm.date.value),
+    date: formatDate(accountForm.date.value),
     type: accountForm.type.value,
     value: parseFloat(accountForm.value.value.replace(",", ".")),
     observations: accountForm.observations.value,
@@ -138,7 +130,7 @@ accountForm.addEventListener("submit", function (event) {
 function editAccount(index) {
   const account = accounts[index];
   accountForm.name.value = account.name;
-  accountForm.date.value = account.date.split("-").reverse().join(""); // Reverte para o formato ddmmaaaa
+  accountForm.date.value = account.date.split('/').reverse().join('-'); // Reverte para o formato 'yyyy-mm-dd'
   accountForm.type.value = account.type;
   accountForm.value.value = account.value.toString().replace(".", ",");
   accountForm.observations.value = account.observations;
