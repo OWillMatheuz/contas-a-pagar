@@ -11,12 +11,12 @@ function renderAccounts() {
   accountsContainer.innerHTML = "";
 
   const accountsByMonth = {};
-  accounts.forEach((account) => {
+  accounts.forEach((account, index) => {
     const monthYear = account.date.substring(0, 7); // Obtém o mês e ano (YYYY-MM)
     if (!accountsByMonth[monthYear]) {
       accountsByMonth[monthYear] = [];
     }
-    accountsByMonth[monthYear].push(account);
+    accountsByMonth[monthYear].push({ ...account, index });
   });
 
   for (const monthYear in accountsByMonth) {
@@ -44,7 +44,7 @@ function renderAccounts() {
     let totalValueToPay = 0;
     let totalValuePaid = 0;
 
-    accountsByMonth[monthYear].forEach((account, index) => {
+    accountsByMonth[monthYear].forEach((account) => {
       const row = document.createElement("tr");
 
       const daysUntilDue = calculateDaysUntilDue(account.date);
@@ -66,8 +66,8 @@ function renderAccounts() {
                 <td>R$ ${formatCurrency(account.value)}</td>
                 <td>${account.observations}</td>
                 <td>
-                    <button class="edit-btn" onclick="editAccount(${index})">Editar</button>
-                    <button class="delete-btn" onclick="deleteAccount(${index})">Excluir</button>
+                    <button class="edit-btn" onclick="editAccount(${account.index})">Editar</button>
+                    <button class="delete-btn" onclick="deleteAccount(${account.index})">Excluir</button>
                 </td>
             `;
 
@@ -168,6 +168,8 @@ function editAccount(index) {
   accountForm.dataset.mode = "edit";
   accountForm.dataset.index = index;
   accountForm.querySelector('button[type="submit"]').textContent = "Salvar Edição";
+
+  accountForm.scrollIntoView({ behavior: 'smooth' });
 
   alert("Editando conta...");
 }
