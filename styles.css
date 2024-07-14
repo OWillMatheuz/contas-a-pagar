@@ -152,3 +152,7 @@ th, td {
     font-size: 10px;
   }
 }
+
+.paid-account {
+  background-color: #d3d3d3; /* Cor de fundo cinza para contas pagas */
+}

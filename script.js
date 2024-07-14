@@ -12,7 +12,7 @@ function renderAccounts() {
 
   const accountsByMonth = {};
   accounts.forEach((account) => {
-    const monthYear = account.date.substring(3, 10);
+    const monthYear = account.date.substring(0, 7); // Obtém o mês e ano (YYYY-MM)
     if (!accountsByMonth[monthYear]) {
       accountsByMonth[monthYear] = [];
     }
@@ -41,22 +41,27 @@ function renderAccounts() {
         `;
     const tbody = table.querySelector("tbody");
 
+    let totalValueToPay = 0;
+    let totalValuePaid = 0;
+
     accountsByMonth[monthYear].forEach((account, index) => {
       const row = document.createElement("tr");
 
       const daysUntilDue = calculateDaysUntilDue(account.date);
       let alertClass = "";
-      if (daysUntilDue < 0) {
+      if (daysUntilDue < 0 && account.type !== "Pago") {
         alertClass = "alert-overdue";
-      } else if (daysUntilDue === 1) {
+      } else if (daysUntilDue === 1 && account.type !== "Pago") {
         alertClass = "alert-close";
+      } else if (account.type === "Pago") {
+        alertClass = "paid-account";
       } else {
         alertClass = "alert-on-time";
       }
 
       row.innerHTML = `
                 <td>${account.name}</td>
-                <td>${account.date}</td>
+                <td>${formatDate(account.date)}</td>
                 <td>${account.type}</td>
                 <td>R$ ${formatCurrency(account.value)}</td>
                 <td>${account.observations}</td>
@@ -68,7 +73,33 @@ function renderAccounts() {
 
       row.classList.add(alertClass);
       tbody.appendChild(row);
+
+      totalValueToPay += account.value;
+
+      if (account.type === "Pago") {
+        totalValuePaid += account.value;
+      }
     });
+
+    const remainingValue = totalValueToPay - totalValuePaid;
+    const totalRowToPay = document.createElement("tr");
+    totalRowToPay.innerHTML = `
+            <td colspan="3"><strong>Total a Pagar:</strong></td>
+            <td colspan="3"><strong>R$ ${formatCurrency(totalValueToPay)}</strong></td>
+        `;
+    const totalRowPaid = document.createElement("tr");
+    totalRowPaid.innerHTML = `
+            <td colspan="3"><strong>Total Pago:</strong></td>
+            <td colspan="3"><strong>R$ ${formatCurrency(totalValuePaid)}</strong></td>
+        `;
+    const totalRowRemaining = document.createElement("tr");
+    totalRowRemaining.innerHTML = `
+            <td colspan="3"><strong>Total Restante:</strong></td>
+            <td colspan="3"><strong>R$ ${formatCurrency(remainingValue)}</strong></td>
+        `;
+    tbody.appendChild(totalRowToPay);
+    tbody.appendChild(totalRowPaid);
+    tbody.appendChild(totalRowRemaining);
 
     monthContainer.appendChild(table);
     accountsContainer.appendChild(monthContainer);
@@ -78,8 +109,8 @@ function renderAccounts() {
 function calculateDaysUntilDue(dueDate) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const [day, month, year] = dueDate.split('/');
-  const due = new Date(`${year}-${month}-${day}`);
+  const [year, month, day] = dueDate.split('-');
+  const due = new Date(year, month - 1, day);
   const timeDiff = due.getTime() - today.getTime();
   return Math.ceil(timeDiff / (1000 * 3600 * 24));
 }
@@ -94,7 +125,7 @@ function formatCurrency(value) {
 }
 
 function getMonthName(monthYear) {
-  const [month, year] = monthYear.split("-");
+  const [year, month] = monthYear.split("-");
   const date = new Date(year, month - 1);
   return date.toLocaleString("pt-BR", { month: "long", year: "numeric" });
 }
@@ -104,7 +135,7 @@ accountForm.addEventListener("submit", function (event) {
 
   const account = {
     name: accountForm.name.value,
-    date: formatDate(accountForm.date.value),
+    date: accountForm.date.value,
     type: accountForm.type.value,
     value: parseFloat(accountForm.value.value.replace(",", ".")),
     observations: accountForm.observations.value,
@@ -114,8 +145,7 @@ accountForm.addEventListener("submit", function (event) {
     const editIndex = parseInt(accountForm.dataset.index);
     accounts[editIndex] = account;
     accountForm.dataset.mode = "add";
-    accountForm.querySelector('button[type="submit"]').textContent =
-      "Adicionar Conta";
+    accountForm.querySelector('button[type="submit"]').textContent = "Adicionar Conta";
     alert("Conta atualizada com sucesso!");
   } else {
     accounts.push(account);
@@ -130,15 +160,14 @@ accountForm.addEventListener("submit", function (event) {
 function editAccount(index) {
   const account = accounts[index];
   accountForm.name.value = account.name;
-  accountForm.date.value = account.date.split('/').reverse().join('-'); // Reverte para o formato 'yyyy-mm-dd'
+  accountForm.date.value = account.date;
   accountForm.type.value = account.type;
   accountForm.value.value = account.value.toString().replace(".", ",");
   accountForm.observations.value = account.observations;
 
   accountForm.dataset.mode = "edit";
   accountForm.dataset.index = index;
-  accountForm.querySelector('button[type="submit"]').textContent =
-    "Salvar Edição";
+  accountForm.querySelector('button[type="submit"]').textContent = "Salvar Edição";
 
   alert("Editando conta...");
 }
